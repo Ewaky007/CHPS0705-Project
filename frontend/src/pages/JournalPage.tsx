@@ -1,0 +1,3 @@
+import { activities } from '../data'
+import { PageTitle } from '../components/PageTitle'
+export default function JournalPage() { return <><PageTitle eyebrow="TRAÇABILITÉ" title="Journal d’activité" description="Historique horodaté des actions administratives structurantes." /><section className="panel journal-panel"><div className="journal-date">Aujourd’hui · 17 octobre 2026</div>{activities.concat(activities).map((activity, index) => <div className="journal-item" key={`${activity.time}-${index}`}><span className={`activity-dot ${activity.tone}`} /><time>{activity.time}</time><div><b>{activity.title}</b><p>{activity.detail}</p></div><span className="journal-admin">Clara Lefèvre</span></div>)}</section></> }
