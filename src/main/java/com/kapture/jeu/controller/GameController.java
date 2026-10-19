@@ -16,6 +16,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -168,7 +171,7 @@ public class GameController {
     }
 
     /**
-     * Interrompt le jeu, ouvre la boîte de dialogue de signalement et extrait l'état du plateau.
+     * Interrompt le jeu, ouvre la boîte de dialogue de signalement, génère le JSON et l'écrit dans un fichier.
      */
     @FXML
     public void actionSignaler() {
@@ -192,7 +195,16 @@ public class GameController {
 
         res.ifPresent(desc -> {
             String json = plateau.genererJSON(desc);
-            // À ce stade, le JSON est prêt pour transmission réseau vers le backend Kapture
+            
+            // Écriture du JSON
+            try {
+                Path cheminFichier = Paths.get("report.json");
+                Files.writeString(cheminFichier, json);
+                System.out.println("Le fichier a bien ete cree");
+            } catch (Exception ex) {
+                System.out.println("=> ERREUR : Impossible de creer le fichier : " + ex.getMessage());
+            }
+
             labelInfo.setText("Signalement envoyé !");
         });
 
