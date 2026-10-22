@@ -1,12 +1,17 @@
 package com.kapture.jeu.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Moteur logique du jeu d'échecs.
  * Gère la matrice 8x8, l'état des pièces, les tours de jeu et les règles de déplacement.
  */
 public class Board {
+
     private Piece[][] grille;
     private PieceColor joueurActif = PieceColor.BLANC;
+    private List<String> historiqueCoups = new ArrayList<>(); 
 
     public Board() {
         this.grille = new Piece[8][8];
@@ -76,6 +81,11 @@ public class Board {
             return false;
         }
 
+        // ENREGISTREMENT DU COUP
+        String log = String.format("%s %s : [%d,%d] -> [%d,%d]", 
+                pieceDep.getCouleur().name(), pieceDep.getType().name(), ligDep, colDep, ligArr, colArr);
+        historiqueCoups.add(log);
+
         // Application du déplacement dans la matrice
         grille[ligArr][colArr] = pieceDep;
         grille[ligDep][colDep] = null;
@@ -95,10 +105,20 @@ public class Board {
         StringBuilder json = new StringBuilder();
         json.append("{\n");
         
-        // Échappement des guillemets pour garantir la validité du JSON
         String descSecu = desc.replace("\"", "\\\"");
         json.append("  \"commentaire\": \"").append(descSecu).append("\",\n");
         
+        //INJECTION DE L'HISTORIQUE 
+        json.append("  \"historique\": [\n");
+        for (int i = 0; i < historiqueCoups.size(); i++) {
+            json.append("    \"").append(historiqueCoups.get(i)).append("\"");
+            if (i < historiqueCoups.size() - 1) {
+                json.append(","); // Virgule pour tous sauf le dernier
+            }
+            json.append("\n");
+        }
+        json.append("  ],\n");
+
         json.append("  \"pieces\": [\n");
         boolean premier = true;
 
