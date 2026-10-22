@@ -24,10 +24,10 @@ export function AdminLayout() {
         <p className="nav-heading">OBSERVATION</p>
         {links.slice(2).map(({ to, label, icon: Icon, count }) => <NavLink className="nav-item" to={to} key={to}><Icon size={19} /><span>{label}</span>{count && <em>{count}</em>}</NavLink>)}
       </nav>
-      <div className="sidebar-bottom"><NavLink className="nav-item" to="/admin/journal"><BookIcon size={19} /><span>Journal d’activité</span></NavLink><button className="nav-item"><SettingsIcon size={19} /><span>Paramètres</span></button><div className="user-card"><div className="avatar">CL</div><span><b>Clara Lefèvre</b><small>Administratrice</small></span><ChevronIcon size={15} /></div></div>
+      <div className="sidebar-bottom"><NavLink className="nav-item" to="/admin/journal"><BookIcon size={19} /><span>Journal d’activité</span></NavLink><button className="nav-item"><SettingsIcon size={19} /><span>Paramètres</span></button><div className="user-card"><div className="avatar">JJ</div><span><b>Jessica Jaunaux</b><small>Administratrice</small></span><ChevronIcon size={15} /></div></div>
     </aside>
     <main className="main-content">
-      <header className="topbar"><div className="breadcrumbs"><span>Administration</span><ChevronIcon size={14} /><b>{title}</b></div><div className="top-actions"><div className="global-search"><SearchIcon size={17} /><input placeholder="Rechercher..." aria-label="Rechercher" /></div><button className="icon-button notification" aria-label="Notifications"><BellIcon size={19} /><i /></button><div className="top-avatar">CL</div></div></header>
+      <header className="topbar"><div className="breadcrumbs"><span>Administration</span><ChevronIcon size={14} /><b>{title}</b></div><div className="top-actions"><div className="global-search"><SearchIcon size={17} /><input placeholder="Rechercher..." aria-label="Rechercher" /></div><button className="icon-button notification" aria-label="Notifications"><BellIcon size={19} /><i /></button><div className="top-avatar">JJ</div></div></header>
       <div className="page-content"><Outlet /></div>
     </main>
   </div>
