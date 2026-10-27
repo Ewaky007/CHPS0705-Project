@@ -8,13 +8,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
- * Point d'entrée principal de l'application JavaFX Kapture Client.
+ * Fichier Main de l'application JavaFX
  */
 public class Main extends Application {
     
-    /**
-     * Initialise et affiche la fenêtre principale du jeu.
-     */
     @Override
     public void start(Stage fenetre) throws Exception {
         FXMLLoader chargeur = new FXMLLoader(Main.class.getResource("game.fxml"));

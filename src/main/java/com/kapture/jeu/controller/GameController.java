@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-
+import javafx.scene.control.Alert;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +40,7 @@ public class GameController {
     private Integer ligSel = null;
     private Integer colSel = null;
 
-    private int tempsBlanc = 600; // Temps initial en secondes (10 minutes)
+    private int tempsBlanc = 600; // Temps initial
     private int tempsNoir = 600;
     private Timeline chrono;
 
@@ -55,7 +55,7 @@ public class GameController {
     }
 
     /**
-     * Démarre une boucle temporelle qui décrémente l'horloge du joueur actif chaque seconde.
+     * Démarre une boucle qui décrémente l'horloge du joueur actif chaque seconde.
      */
     private void lancerChrono() {
         chrono = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
@@ -81,7 +81,7 @@ public class GameController {
     }
 
     /**
-     * Reconstruit visuellement la grille JavaFX en fonction de l'état actuel de la matrice Board.
+     * Reconstruit la grille JavaFX en fonction de l'état actuel de la matrice Board.
      */
     private void majAffichage() {
         grillePlateau.getChildren().clear();
@@ -91,7 +91,6 @@ public class GameController {
                 StackPane casePlateau = new StackPane();
                 casePlateau.setPrefSize(TAILLE_CASE, TAILLE_CASE);
 
-                // Détermination de la couleur de fond (sélection, case claire, case foncée)
                 if (ligSel != null && ligSel == lig && colSel != null && colSel == col) {
                     casePlateau.setStyle("-fx-background-color: #7b61ff;"); 
                 } else if ((lig + col) % 2 == 0) {
@@ -100,7 +99,7 @@ public class GameController {
                     casePlateau.setStyle("-fx-background-color: #b58863;"); 
                 }
 
-                // Insertion du caractère Unicode de la pièce si la case n'est pas vide
+                // Insertion de la pièce si la case n'est pas vide
                 Piece p = plateau.getPiece(lig, col);
                 if (p != null) {
                     Label labelPiece = new Label(getIconePiece(p));
@@ -118,7 +117,7 @@ public class GameController {
     }
 
     /**
-     * Gère la logique de sélection et de déplacement lors d'un clic sur l'échiquier.
+     * Gère la logique de sélection et de déplacement lors d'un clic
      */
     private void clicCase(int lig, int col) {
         if (ligSel == null && colSel == null) {
@@ -138,8 +137,24 @@ public class GameController {
                 if (deplacementOk) {
                     ligSel = null;
                     colSel = null;
+                    
+                    // DÉTECTION DE FIN DE PARTIE
+                    if (plateau.estEchecEtMat(plateau.getJoueurActif())) {
+                        chrono.pause(); // Arrêt du temps
+                        
+                        String vainqueur = (plateau.getJoueurActif() == PieceColor.BLANC) ? "NOIRS" : "BLANCS";
+                        
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Fin de partie");
+                        alert.setHeaderText("Échec et Mat !");
+                        alert.setContentText("Victoire des " + vainqueur + " !");
+                        alert.showAndWait();
+                        
+                        grillePlateau.setDisable(true);
+                    }
+                    
                 } else {
-                    // Si le déplacement échoue (règle invalide), on tente de sélectionner la nouvelle case
+                    // Si le déplacement échoue, on tente de sélectionner la nouvelle case
                     Piece pClic = plateau.getPiece(lig, col);
                     if (pClic != null && pClic.getCouleur() == plateau.getJoueurActif()) {
                         ligSel = lig;
@@ -151,11 +166,11 @@ public class GameController {
                 }
             }
         }
-        majAffichage(); // Rafraîchissement visuel après chaque interaction
+        majAffichage(); // Rafraîchissement après chaque interaction
     }
 
     /**
-     * Associe un caractère Unicode à chaque type et couleur de pièce.
+     * Associe un caractère à chaque type et couleur de pièce.
      */
     private String getIconePiece(Piece p) {
         return switch (p.getCouleur()) {
@@ -171,11 +186,11 @@ public class GameController {
     }
 
     /**
-     * Interrompt le jeu, ouvre la boîte de dialogue de signalement, génère le JSON et l'écrit dans un fichier.
+     * boîte de dialogue de signalement, génère le JSON
      */
     @FXML
     public void actionSignaler() {
-        chrono.pause(); // Suspension du temps pendant la rédaction du rapport
+        chrono.pause(); // Suspension du chrono pendant le signalement
 
         Dialog<String> boite = new Dialog<>();
         boite.setTitle("Signaler une anomalie");
@@ -196,7 +211,6 @@ public class GameController {
         res.ifPresent(desc -> {
             String json = plateau.genererJSON(desc);
             
-            // Écriture du JSON
             try {
                 Path cheminFichier = Paths.get("report.json");
                 Files.writeString(cheminFichier, json);

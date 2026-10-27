@@ -1,7 +1,7 @@
 package com.kapture.jeu.engine;
 
 /**
- * Définit les différents types de pièces du jeu d'échecs.
+ * Définit les différents types de pièces.
  */
 public enum PieceType {
     PION, 
